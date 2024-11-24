@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import SlideShow from "../components/Slide";
-import Sidebar from "../components/SideBar";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import { Video } from "expo-av";
@@ -20,6 +19,7 @@ import Horror from "../components/Horror";
 import Fantasy from "../components/Fantasy";
 import Thriller from "../components/Thriller";
 import Drama from "../components/Drama";
+import Sidebar from "../components/SideBar";
 
 const HomeScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -67,11 +67,6 @@ const HomeScreen = () => {
         contentContainerStyle={{ paddingBottom: 0 }}
         showsVerticalScrollIndicator={false}
       >
-        <Sidebar
-          isVisible={sidebarVisible}
-          onClose={() => setSidebarVisible(false)}
-        />
-
         <View style={styles.header}>
           <TouchableOpacity onPress={toggleSidebar}>
             {sidebarVisible ? (
@@ -118,6 +113,10 @@ const HomeScreen = () => {
           </View>
         </Modal>
       </ScrollView>
+      <Sidebar
+        isVisible={sidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+      />
     </SafeAreaView>
   );
 };
