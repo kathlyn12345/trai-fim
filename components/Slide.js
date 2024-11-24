@@ -125,7 +125,6 @@ const SlideShow = () => {
 
       <Pagination slides={slides} currentIndex={currentIndex} />
 
-      {/* Modal for Video Playback */}
       <Modal
         visible={modalVisible}
         onRequestClose={handleCloseModal}
@@ -136,7 +135,7 @@ const SlideShow = () => {
           <View style={styles.modalContent}>
             <TouchableOpacity
               onPress={handleCloseModal}
-              style={styles.arrowButton} // Arrow button style
+              style={styles.arrowButton} 
             >
               <Icon name="arrow-left" size={19} color="#FFFFFF" />
             </TouchableOpacity>
@@ -162,20 +161,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  
   slideContainer: {
     position: "relative",
     width: 360,
     height: 210,
   },
+
   slide: {
     width: "100%",
     height: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
+
   loader: {
     marginTop: 20,
   },
+
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -183,6 +186,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.80)",
     position: "relative",
   },
+
   modalBackdrop: {
     position: "absolute",
     top: 0,
@@ -192,6 +196,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.80)",
     zIndex: -1,
   },
+
   modalContent: {
     width: "100%",
     height: "50%",
@@ -201,11 +206,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   videoPlayer: {
     width: "105%",
     height: "60%",
     marginBottom: 90,
   },
+
   modalTitle: {
     fontSize: 30,
     fontWeight: "bold",
@@ -214,6 +221,7 @@ const styles = StyleSheet.create({
     textAlign: "left",
     width: "100%",
   },
+
   modalDescription: {
     fontSize: 15,
     marginTop: -70,
@@ -222,13 +230,14 @@ const styles = StyleSheet.create({
     width: "105%",
     paddingHorizontal: 10,
   },
+
   arrowButton: {
     position: "absolute",
     top: 0,
     left: 10,
     zIndex: 1,
     padding: 10,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
     borderRadius: 50,
   },
 });

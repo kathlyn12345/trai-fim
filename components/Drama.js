@@ -15,33 +15,33 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Video } from "expo-av";
 import { useCustomFonts } from "./font";
 
-const Fantasy = () => {
-  const [fantasy, setFantasy] = useState([]);
+const Drama = () => {
+  const [drama, setDrama] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState("");
   const [currentTitle, setCurrentTitle] = useState("");
   const [currentDescription, setCurrentDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(true); // For data fetching status
+  const [isFetching, setIsFetching] = useState(true); 
   const fontsLoaded = useCustomFonts();
 
   useEffect(() => {
-    const fetchFantasy = async () => {
+    const fetchDrama = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "fantasy"));
-        const fetchedFantasy = querySnapshot.docs.map((doc) => ({
+        const querySnapshot = await getDocs(collection(db, "drama"));
+        const fetchedDrama = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setFantasy(fetchedFantasy);
+        setDrama(fetchedDrama);
       } catch (error) {
-        console.error("Error fetching fantasy:", error);
+        console.error("Error fetching drama:", error);
       } finally {
-        setIsFetching(false); // Set fetching to false after data is fetched
+        setIsFetching(false); 
       }
     };
 
-    fetchFantasy();
+    fetchDrama();
   }, []);
 
   const handleSlidePress = (videoUrl, title, description) => {
@@ -75,20 +75,20 @@ const Fantasy = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Fantasy</Text>
+      <Text style={styles.title}>Drama</Text>
 
       {isFetching ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#FF9500" />
           <Text style={styles.loadingText}>...</Text>
         </View>
-      ) : fantasy.length === 0 ? (
+      ) : drama.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No fantasy trailers available.</Text>
+          <Text style={styles.emptyText}>No drama trailers available.</Text>
         </View>
       ) : (
         <ScrollView horizontal>
-          {fantasy.map((item) => (
+          {drama.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.card}
@@ -264,4 +264,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Fantasy;
+export default Drama;

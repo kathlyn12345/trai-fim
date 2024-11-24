@@ -19,6 +19,7 @@ import Action from "../components/Action";
 import Horror from "../components/Horror";
 import Fantasy from "../components/Fantasy";
 import Thriller from "../components/Thriller";
+import Drama from "../components/Drama";
 
 const HomeScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -88,15 +89,13 @@ const HomeScreen = () => {
         <View style={styles.content}>
           {slides.length > 0 && (
             <>
-              <SlideShow
-                slides={slides}
-                onSlidePress={handleSlidePress} 
-              />
+              <SlideShow slides={slides} onSlidePress={handleSlidePress} />
               <Recommendation />
               <Action />
               <Horror />
               <Fantasy />
               <Thriller />
+              <Drama />
             </>
           )}
         </View>
@@ -111,9 +110,9 @@ const HomeScreen = () => {
               <Video
                 source={{ uri: currentVideoUrl }}
                 style={styles.videoPlayer}
-                useNativeControls={true} 
+                useNativeControls={true}
                 resizeMode="cover"
-                shouldPlay={true} 
+                shouldPlay={true}
               />
             </View>
           </View>
@@ -135,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 15,
     backgroundColor: "#000000",
-    zIndex: 2, 
+    zIndex: 2,
   },
 
   content: {

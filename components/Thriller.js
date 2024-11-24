@@ -7,6 +7,7 @@ import {
   ScrollView,
   Modal,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
@@ -14,14 +15,14 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import { Video } from "expo-av";
 import { useCustomFonts } from "./font";
 
-
 const Thriller = () => {
-  const [thriller, setthriller] = useState([]);
+  const [thriller, setThriller] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState("");
   const [currentTitle, setCurrentTitle] = useState("");
   const [currentDescription, setCurrentDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true); 
   const fontsLoaded = useCustomFonts();
 
   useEffect(() => {
@@ -32,9 +33,11 @@ const Thriller = () => {
           id: doc.id,
           ...doc.data(),
         }));
-        setthriller(fetchedThriller);
+        setThriller(fetchedThriller);
       } catch (error) {
         console.error("Error fetching thriller:", error);
+      } finally {
+        setIsFetching(false); 
       }
     };
 
@@ -64,8 +67,8 @@ const Thriller = () => {
 
   if (!fontsLoaded) {
     return (
-      <View>
-        <Text>Loading Fonts...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading Fonts...</Text>
       </View>
     );
   }
@@ -73,26 +76,38 @@ const Thriller = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Thriller</Text>
-      <ScrollView horizontal>
-        {thriller.map((item) => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.card}
-            onPress={() =>
-              handleSlidePress(item.videoUrl, item.title, item.description)
-            }
-          >
-            <Image source={{ uri: item.imageUrl }} style={styles.image} />
-            <Text
-              style={styles.cardTitle}
-              numberOfLines={1}
-              ellipsizeMode="tail"
+
+      {isFetching ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#FF9500" />
+          <Text style={styles.loadingText}>...</Text>
+        </View>
+      ) : thriller.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No thriller trailers available.</Text>
+        </View>
+      ) : (
+        <ScrollView horizontal>
+          {thriller.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.card}
+              onPress={() =>
+                handleSlidePress(item.videoUrl, item.title, item.description)
+              }
             >
-              {item.title}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+              <Image source={{ uri: item.imageUrl }} style={styles.image} />
+              <Text
+                style={styles.cardTitle}
+                numberOfLines={1}
+                ellipsizeMode="tail"
+              >
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
 
       <Modal
         visible={modalVisible}
@@ -118,6 +133,13 @@ const Thriller = () => {
               onLoadStart={() => setIsLoading(true)}
               onLoad={() => setIsLoading(false)}
             />
+            {isLoading && (
+              <ActivityIndicator
+                size="large"
+                color="#FFFFFF"
+                style={styles.videoLoader}
+              />
+            )}
             <Text style={styles.modalTitle}>{currentTitle}</Text>
             <Text style={styles.modalDescription}>{currentDescription}</Text>
           </View>
@@ -163,7 +185,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.95)", 
+    backgroundColor: "rgba(0, 0, 0, 0.95)",
   },
 
   modalContent: {
@@ -179,6 +201,13 @@ const styles = StyleSheet.create({
     width: "105%",
     height: 200,
     borderRadius: 10,
+  },
+
+  videoLoader: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: [{ translateX: -15 }, { translateY: -15 }],
   },
 
   modalTitle: {
@@ -207,6 +236,31 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 50,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  loadingText: {
+    color: "#FFFFFF",
+    fontFamily: "Roboto-Medium",
+    fontSize: 16,
+    marginTop: 10,
+  },
+
+  emptyContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 20,
+  },
+
+  emptyText: {
+    color: "#CCCCCC",
+    fontFamily: "Roboto-Medium",
+    fontSize: 16,
   },
 });
 
