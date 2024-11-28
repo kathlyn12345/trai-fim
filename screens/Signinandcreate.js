@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useCustomFonts } from "../components/font";
 
@@ -12,35 +12,46 @@ const SigninandCreate = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.Tagline}>Where Every Story Finds a Home</Text>
+    <ImageBackground 
+      source={require("../assets/icons/SS.png")} // Path to your background image
+      style={[styles.background, { resizeMode: "cover", height: "100%", width: "100%" }]}
+    >
+      <View style={styles.container}>
+        <Text style={styles.Tagline}>Where Every Story Finds a Home</Text>
 
-      <View style={styles.ButtonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("HomeScreen")}
-        >
-          <Text style={styles.signin}>Sign In</Text>
-        </TouchableOpacity>
+        <View style={styles.ButtonContainer}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("Signin")}
+          >
+            <Text style={styles.signin}>Sign In</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.bButton]}
-          onPress={() => navigation.navigate("SignUp")}
-        >
-          <Text style={styles.Text}>Create an Account</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, styles.bButton]}
+            onPress={() => navigation.navigate("Signup")}
+          >
+            <Text style={styles.Text}>Create an Account</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    padding: 20,
+  },
+
   container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    backgroundColor: "#000000",
-    padding: 20,
+    width: "100%",
   },
 
   Tagline: {
@@ -72,8 +83,8 @@ const styles = StyleSheet.create({
 
   bButton: {
     backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#000000",
+    
+    
   },
 
   Text: {

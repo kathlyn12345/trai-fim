@@ -47,16 +47,16 @@ const Sidebar = ({ isVisible, onClose, onLogout }) => {
         <Ionicons name="home" size={20} color="#FFFFFF" />
         <Text style={styles.Text}>Home</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.Item} onPress={onClose}>
+      <TouchableOpacity style={styles.Item} onPress={() => navigation.navigate("ProfileScreen")}>
         <Ionicons name="person" size={20} color="#FFFFFF" />
         <Text style={styles.Text}>Profile</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.Item} onPress={onClose}>
+      <TouchableOpacity style={styles.Item} onPress={() => navigation.navigate("AboutUsScreen")}>
         <Ionicons name="information-circle" size={20} color="#FFFFFF" />
         <Text style={styles.Text}>About Us</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.Item, styles.logout]} onPress={onLogout}>
+      <TouchableOpacity style={[styles.Item, styles.logout]} onPress={() => navigation.navigate("HomeScreen")}>
         <Ionicons name="log-out" size={20} color="#FFFFFF" />
         <Text style={styles.Text}>Logout</Text>
       </TouchableOpacity>
@@ -75,6 +75,10 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopRightRadius: 30,
     borderBottomRightRadius: 30,
+    borderTopRightRadius: 30, 
+    borderBottomRightRadius: 30,
+    borderColor: "white",
+    borderWidth: 1,
   },
 
   Header: {

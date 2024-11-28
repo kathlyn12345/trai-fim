@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -8,11 +8,13 @@ import {
   Modal,
   TouchableOpacity,
   ActivityIndicator,
+  ToastAndroid, // For showing toast messages
 } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Video } from "expo-av";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { useCustomFonts } from "./font";
 
 const Action = () => {
@@ -22,9 +24,12 @@ const Action = () => {
   const [currentTitle, setCurrentTitle] = useState("");
   const [currentDescription, setCurrentDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(true); 
+  const [playPauseState, setPlayPauseState] = useState(true); // Default: Playing
+  const videoRef = useRef(null); // Video reference
+
   const fontsLoaded = useCustomFonts();
 
+  // Fetch action data from Firestore
   useEffect(() => {
     const fetchAction = async () => {
       try {
@@ -36,12 +41,36 @@ const Action = () => {
         setAction(fetchedAction);
       } catch (error) {
         console.error("Error fetching action:", error);
-      } finally {
-        setIsFetching(false); 
       }
     };
 
     fetchAction();
+  }, []);
+
+  // Firebase Realtime Database Listener
+  useEffect(() => {
+    const database = getDatabase();
+    const playPauseRef = ref(database, "/test/true"); // Adjusted to your structure
+
+    const listener = onValue(playPauseRef, (snapshot) => {
+      const isPlaying = snapshot.val() === 1; // Play if value is 1
+      setPlayPauseState(isPlaying);
+
+      if (videoRef.current) {
+        if (isPlaying) {
+          videoRef.current.playAsync(); // Play video
+          ToastAndroid.show("Video is resumed", ToastAndroid.SHORT); // Show resume message
+        } else {
+          videoRef.current.pauseAsync(); // Pause video
+          ToastAndroid.show("Video is paused", ToastAndroid.SHORT); // Show pause message
+        }
+      }
+    });
+
+    return () => {
+      // Cleanup the listener
+      playPauseRef.off();
+    };
   }, []);
 
   const handleSlidePress = (videoUrl, title, description) => {
@@ -51,6 +80,11 @@ const Action = () => {
       setCurrentDescription(description);
       setModalVisible(true);
       setIsLoading(true);
+
+      // Start the video when modal opens
+      if (videoRef.current) {
+        videoRef.current.playAsync();
+      }
     }
   };
 
@@ -59,10 +93,14 @@ const Action = () => {
     setCurrentVideoUrl("");
     setCurrentTitle("");
     setCurrentDescription("");
+    if (videoRef.current) {
+      videoRef.current.pauseAsync(); // Pause when modal closes
+    }
   };
 
-  const handleFullScreen = (status) => {
-    console.log("Fullscreen status:", status);
+  const handleVideoError = (error) => {
+    console.error("Video error:", error);
+    setIsLoading(false);
   };
 
   if (!fontsLoaded) {
@@ -77,37 +115,26 @@ const Action = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Action</Text>
 
-      {isFetching ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#FF9500" />
-          <Text style={styles.loadingText}>...</Text>
-        </View>
-      ) : action.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No action trailers available.</Text>
-        </View>
-      ) : (
-        <ScrollView horizontal>
-          {action.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.card}
-              onPress={() =>
-                handleSlidePress(item.videoUrl, item.title, item.description)
-              }
+      <ScrollView horizontal>
+        {action.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.card}
+            onPress={() =>
+              handleSlidePress(item.videoUrl, item.title, item.description)
+            }
+          >
+            <Image source={{ uri: item.imageUrl }} style={styles.image} />
+            <Text
+              style={styles.cardTitle}
+              numberOfLines={1}
+              ellipsizeMode="tail"
             >
-              <Image source={{ uri: item.imageUrl }} style={styles.image} />
-              <Text
-                style={styles.cardTitle}
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {item.title}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )}
+              {item.title}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
 
       <Modal
         visible={modalVisible}
@@ -124,12 +151,12 @@ const Action = () => {
               <Icon name="arrow-left" size={19} color="#FFFFFF" />
             </TouchableOpacity>
             <Video
+              ref={videoRef}
               source={{ uri: currentVideoUrl }}
               style={styles.videoPlayer}
               useNativeControls={true}
               resizeMode="cover"
-              shouldPlay={true}
-              onFullscreenUpdate={handleFullScreen}
+              onError={handleVideoError}
               onLoadStart={() => setIsLoading(true)}
               onLoad={() => setIsLoading(false)}
             />
@@ -150,7 +177,8 @@ const Action = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  // All styles remain unchanged
+   container: {
     padding: 10,
   },
 
