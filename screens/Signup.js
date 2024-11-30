@@ -1,9 +1,19 @@
-//////////////////////////////////////////////////////////////////
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Modal,
+  Linking,
+  ScrollView,
+} from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signUpWithEmailPassword } from "../firebase/firebaseConfig";
+import Checkbox from "expo-checkbox";
 
 const SignUp = () => {
   const navigation = useNavigation();
@@ -13,6 +23,9 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isAgreed, setIsAgreed] = useState(false); // State for the checkbox
+  const [modalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [hasReadTerms, setHasReadTerms] = useState(false); // Track if the user has read the Terms
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -27,19 +40,39 @@ const SignUp = () => {
       setErrorMessage("Passwords do not match!");
       return;
     }
+
+    if (!isAgreed) {
+      setErrorMessage("You must agree to the Terms and Conditions!");
+      return;
+    }
+
     try {
-      setErrorMessage(""); 
+      setErrorMessage("");
       await signUpWithEmailPassword(email, password);
       alert("Account created successfully!");
-      navigation.navigate("Signin"); 
+      navigation.navigate("Signin");
     } catch (error) {
       setErrorMessage("Error creating account: " + error.message);
     }
   };
 
+  // Toggle the checkbox state
+  const handleCheckboxChange = () => {
+    if (hasReadTerms) {
+      setIsAgreed(!isAgreed);
+    }
+  };
+
+  // Handle when user confirms they've read the terms
+  const handleReadTerms = () => {
+    setHasReadTerms(true); // Set hasReadTerms to true when the user clicks to acknowledge reading the terms
+    setIsAgreed(true); // Automatically check the box after acknowledging
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MovieNest</Text>
+      <Text style={styles.title}>Trai-Film</Text>
       <Text style={styles.subtitle}>Create an account</Text>
 
       {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
@@ -50,25 +83,24 @@ const SignUp = () => {
           style={[styles.socialButton]}
           onPress={() => Linking.openURL("https://www.google.com")}
         >
-          <Image
-            source={require("../assets/icons/Google.png")}
-            style={styles.socialIcon}
-          />
+          <Image source={require("../assets/icons/Google.png")} style={styles.socialIcon} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.socialButton]}
           onPress={() => Linking.openURL("https://www.facebook.com")}
         >
-          <Image
-            source={require("../assets/icons/Facebook.png")}
-            style={styles.socialIcon}
-          />
+          <Image source={require("../assets/icons/Facebook.png")} style={styles.socialIcon} />
         </TouchableOpacity>
         <View style={[styles.slash, styles.two]} />
       </View>
 
       <View style={styles.inputContainer}>
-        <FontAwesome name="envelope" size={20} color="rgba(255, 255, 255, 0.7)" style={styles.inputIcon} />
+        <FontAwesome
+          name="envelope"
+          size={20}
+          color="rgba(255, 255, 255, 0.7)"
+          style={styles.inputIcon}
+        />
         <TextInput
           style={styles.input}
           placeholder="Email"
@@ -80,7 +112,12 @@ const SignUp = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={20} color="rgba(255, 255, 255, 0.7)" style={styles.inputIcon} />
+        <Ionicons
+          name="lock-closed"
+          size={20}
+          color="rgba(255, 255, 255, 0.7)"
+          style={styles.inputIcon}
+        />
         <TextInput
           style={styles.input}
           placeholder="Password"
@@ -95,7 +132,12 @@ const SignUp = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Ionicons name="lock-closed" size={20} color="rgba(255, 255, 255, 0.7)" style={styles.inputIcon} />
+        <Ionicons
+          name="lock-closed"
+          size={20}
+          color="rgba(255, 255, 255, 0.7)"
+          style={styles.inputIcon}
+        />
         <TextInput
           style={styles.input}
           placeholder="Confirm Password"
@@ -109,7 +151,24 @@ const SignUp = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity onPress={handleSignUp} style={styles.signUpButton}>
+      {/* Agree to Terms and Conditions Checkbox */}
+      <View style={styles.checkboxContainer}>
+        <Checkbox
+          value={isAgreed}
+          onValueChange={handleCheckboxChange}
+          tintColors={{ true: "#FF9500", false: "rgba(255, 255, 255, 0.7)" }}
+          disabled={!hasReadTerms} // Disable checkbox if terms haven't been read
+        />
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Text style={styles.checkboxText}>Agree to Terms and Conditions</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity
+        onPress={handleSignUp}
+        style={[styles.signUpButton, { opacity: isAgreed ? 1 : 0.5 }]}
+        disabled={!isAgreed} // Disable button if terms are not agreed
+      >
         <Text style={styles.signUpText}>Sign Up</Text>
       </TouchableOpacity>
 
@@ -119,6 +178,32 @@ const SignUp = () => {
           <Text style={styles.signInLink}>Sign In</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modal for Terms and Conditions */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <ScrollView contentContainerStyle={styles.modalScroll}>
+              <Text style={styles.modalTitle}>Terms and Conditions</Text>
+              <Text style={styles.modalText}>
+                By agreeing to these Terms and Conditions, you acknowledge and agree to abide by copyright laws as they pertain to this service. All content, including but not limited to text, images, videos, and software, are protected by copyright laws and may not be reproduced, distributed, or used in any manner without the express permission of the copyright holder.
+
+                Unauthorized use of copyrighted materials may result in legal action. You must not use the service in a way that violates the copyright rights of others. If you have any questions about the copyright laws, please refer to the applicable copyright regulations in your jurisdiction.
+
+                <Text style={{ fontWeight: "bold" }}>Copyright © 2024 MovieNest. All rights reserved.</Text>
+              </Text>
+            </ScrollView>
+            <TouchableOpacity onPress={handleReadTerms} style={styles.modalCloseButton}>
+              <Text style={styles.modalCloseText}>I have read the Terms</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -131,7 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000000",
     padding: 20,
   },
-  
+
   title: {
     fontFamily: "Raleway-ExtraBold",
     fontSize: 50,
@@ -249,6 +334,61 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 16,
     marginBottom: 10,
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    marginVertical: 10,
+    marginRight: 90,
+  },
+
+  checkboxText: {
+    color: "#FF9500",
+    marginLeft: 10,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+
+  modalContent: {
+    backgroundColor: "#FFFFFF",
+    width: "80%",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+
+  modalScroll: {
+    paddingBottom: 20,
+  },
+
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+
+  modalText: {
+    fontSize: 16,
+    color: "#333333",
+  },
+
+  modalCloseButton: {
+    backgroundColor: "#FF9500",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginTop: 10,
+  },
+
+  modalCloseText: {
+    color: "#FFFFFF",
+    fontSize: 16,
   },
 });
 

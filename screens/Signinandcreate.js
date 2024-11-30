@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useCustomFonts } from "../components/font";
 
@@ -12,46 +12,46 @@ const SigninandCreate = () => {
   }
 
   return (
-    <ImageBackground 
-      source={require("../assets/icons/SS.png")} // Path to your background image
-      style={[styles.background, { resizeMode: "cover", height: "100%", width: "100%" }]}
-    >
-      <View style={styles.container}>
-        <Text style={styles.Tagline}>Where Every Story Finds a Home</Text>
+    <View style={styles.container}>
+      <Text style={styles.Tagline}>Where Every Story Finds a Home.</Text>
 
-        <View style={styles.ButtonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Signin")}
-          >
-            <Text style={styles.signin}>Sign In</Text>
-          </TouchableOpacity>
+      <View style={styles.ButtonContainer}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("HomeScreen")}
+        >
+          <Text style={styles.signin}>Sign In</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.bButton]}
-            onPress={() => navigation.navigate("Signup")}
-          >
-            <Text style={styles.Text}>Create an Account</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={[styles.button, styles.bButton]}
+          onPress={() => navigation.navigate("Signup")}
+        >
+          <Text style={styles.Text}>Create an Account</Text>
+        </TouchableOpacity>
       </View>
-    </ImageBackground>
+      <Image source={require("../assets/icons/logo.png")} style={styles.logo} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignItems: "center",
-    padding: 20,
-  },
-
   container: {
     flex: 1,
     justifyContent: "flex-start",
     alignItems: "center",
-    width: "100%",
+    backgroundColor: "#000000",
+    padding: 20,
+  },
+
+  logo: {
+    width: 524,
+    height: 524,
+    resizeMode: "contain",
+    marginRight: 70,
+    bottom: 60,
+    transform: [{ rotate: "-40deg" }],
+    zIndex: 1,
   },
 
   Tagline: {
@@ -62,13 +62,15 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginRight: 65,
     marginTop: 100,
+    zIndex: 10,
   },
 
   ButtonContainer: {
     position: "absolute",
-    bottom: 50,
+    bottom: 135,
     width: "100%",
     alignItems: "center",
+    zIndex: 10,
   },
 
   button: {
@@ -83,8 +85,7 @@ const styles = StyleSheet.create({
 
   bButton: {
     backgroundColor: "transparent",
-    
-    
+    borderColor: "#000000",
   },
 
   Text: {

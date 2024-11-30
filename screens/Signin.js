@@ -11,7 +11,6 @@ import {
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { signInWithEmailPassword } from "../firebase/firebaseConfig"; // Import the sign-in function
-import { CheckBox } from 'react-native';
 
 const SignIn = () => {
   const navigation = useNavigation();
@@ -19,7 +18,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // For displaying messages (error or success)
-  const [isAgreed, setIsAgreed] = useState(false); // State for the checkbox
+
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
@@ -47,7 +46,7 @@ const SignIn = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>MovieNest</Text>
+      <Text style={styles.title}>Trai-Film</Text>
       <Text style={styles.subtitle}>Sign in to your account</Text>
 
       <View style={styles.Slashcontainer}>
@@ -139,22 +138,11 @@ const SignIn = () => {
         <Text style={styles.forgotP}>Forgot Password?</Text>
       </TouchableOpacity>
 
-      {/* Agree to Terms and Conditions Checkbox */}
-      <View style={styles.checkboxContainer}>
-        <CheckBox
-          value={isAgreed}
-          onValueChange={setIsAgreed}
-          tintColors={{ true: '#FF9500', false: 'rgba(255, 255, 255, 0.7)' }}
-        />
-        <Text style={styles.checkboxText}>
-          Agree to Terms and Conditions
-        </Text>
-      </View>
+   
 
       <TouchableOpacity
         onPress={handleSignIn}
-        style={[styles.signInButton, { opacity: isAgreed ? 1 : 0.6 }]} // Disable button if not checked
-        disabled={!isAgreed} // Disable sign-in button when checkbox is not checked
+        style={[styles.signInButton]} // Disable button if not checked
       >
         <Text style={styles.signInText}>Sign In</Text>
       </TouchableOpacity>
@@ -267,7 +255,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Bold",
     color: "#FFFFFF",
     fontSize: 15,
-    right : 190,
+    left : 5,
   },
 
   signInButton: {
@@ -317,16 +305,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 10,
-  },
 
-  checkboxText: {
-    color: "#FF9500",
-    marginLeft: 10,
-  },
 });
 
 export default SignIn;

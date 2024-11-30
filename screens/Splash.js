@@ -78,7 +78,7 @@ const SplashScreen = ({ navigation }) => {
 
       {isVisible && fontsLoaded && (
         <Animated.Text style={[styles.text, { opacity: text }]}>
-          MovieNest
+          Trai-Film
         </Animated.Text>
       )}
     </View>

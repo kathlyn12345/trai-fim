@@ -1,20 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Animated, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 const AboutUsScreen = () => {
   const navigation = useNavigation();
 
-  // List of developers with names and roles
+  // List of developers with names, roles, and image paths
   const developers = [
-    { id: '1', name: 'Kath Puyat gods', role: 'Team Leader' },
-    { id: '2', name: 'Nads Mamaw', role: 'UI/UX Designer' },
-    { id: '3', name: 'Ralph Lutang', role: 'Backend Developer' },
-    { id: '4', name: 'Solsona FullStack', role: 'Frontend Developer' },
-    { id: '5', name: 'Avenido asawa ni polizon', role: 'Database Manager' },
-    { id: '6', name: 'Sophia Brown', role: 'Quality Assurance' },
-    { id: '7', name: 'David Wilson', role: 'Mobile Developer' },
+    { id: '1', name: 'Kathlyn M. Leal', role: 'Project Manager', image: require('../assets/Profile/Leal.jpg') },
+    { id: '2', name: 'John Lloyd L. Nadura', role: 'UI/UX Designer', image: require('../assets/Profile/Nadz.jpg') },
+    { id: '3', name: 'John Steven M. Solsona', role: 'Frontend Developer', image: require('../assets/Profile/Steven.jpg') },
+    { id: '4', name: 'Ralph F. Gagante', role: 'Backend Developer', image: require('../assets/Profile/Ralph.jpg') },
+    { id: '5', name: 'Elton John C. Polizon', role: 'Assurance Security', image: require('../assets/Profile/Elton.jpg') },
+    { id: '6', name: 'Kristian D. Avenido', role: 'Database Administrator', image: require('../assets/Profile/kris.jpg') },
+    { id: '7', name: 'Tracy Jasmine Cascayan', role: 'User Insights', image: require('../assets/Profile/Tracy.jpg') },
+    { id: '8', name: 'Developers', role: 'Release Manager', image: require('../assets/Profile/cube.jpg') },
   ];
 
   const fadeAnim = new Animated.Value(0);
@@ -28,45 +29,45 @@ const AboutUsScreen = () => {
   }, []);
 
   return (
-    <ScrollView style={styles.container}>
-      {/* Header with Back Button */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
-          <Ionicons name="arrow-back" size={30} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>About Us</Text>
-      </View>
+    <FlatList
+      style={styles.container}
+      ListHeaderComponent={() => (
+        <>
+          {/* Header with Back Button */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')}>
+              <Ionicons name="arrow-back" size={30} color="white" />
+            </TouchableOpacity>
+            <Text style={styles.headerText}>About Us</Text>
+          </View>
 
-      {/* Description Section */}
-      <Text style={styles.description}>
-        We are a group of seven passionate developers collaborating to bring this application to life. 
-        Each member has contributed their unique expertise to make this app a success.
-      </Text>
-
-      {/* Developer List with Animation */}
-      <Animated.View style={[styles.listContainer, { opacity: fadeAnim }]}>
-        <FlatList
-          data={developers}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Ionicons name="person-circle" size={60} color="#6200ee" style={styles.icon} />
-              <View style={styles.info}>
-                <Text style={styles.name}>{item.name}</Text>
-                <Text style={styles.role}>{item.role}</Text>
-              </View>
-            </View>
-          )}
-        />
-      </Animated.View>
-    </ScrollView>
+          {/* Description Section */}
+          <Text style={styles.description}>
+            We are a group of seven passionate developers collaborating to bring this application to life. 
+            Each member has contributed their unique expertise to make this app a success.
+          </Text>
+        </>
+      )}
+      data={developers}
+      keyExtractor={(item) => item.id}
+      renderItem={({ item }) => (
+        <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
+          {/* Developer Profile Image */}
+          <Image source={item.image} style={styles.icon} />
+          <View style={styles.info}>
+            <Text style={styles.name}>{item.name}</Text>
+            <Text style={styles.role}>{item.role}</Text>
+          </View>
+        </Animated.View>
+      )}
+    />
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1f1f1f', // Dark background for modern look
+    backgroundColor: '#1f1f1f',
     padding: 20,
   },
   header: {
@@ -98,9 +99,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     letterSpacing: 0.5,
   },
-  listContainer: {
-    paddingBottom: 20,
-  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -113,17 +111,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 6,
     elevation: 4,
-    transform: [{ scale: 1 }],
-    transition: 'transform 0.3s ease',
-  },
-  cardHovered: {
-    transform: [{ scale: 1.05 }],
   },
   icon: {
-    marginRight: 20,
+    width: 60,
+    height: 60,
     borderRadius: 30,
     backgroundColor: '#6200ee',
-    padding: 10,
+    marginRight: 20,
   },
   info: {
     flex: 1,

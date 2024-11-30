@@ -31,7 +31,7 @@ const Sidebar = ({ isVisible, onClose, onLogout }) => {
         <TouchableOpacity onPress={onClose}>
           <Ionicons name="menu" size={30} color="#FFFFFF" />
         </TouchableOpacity>
-        <Text style={styles.Title}>MovieNext</Text>
+        <Text style={styles.Title}>Trai-Film</Text>
       </View>
 
       <TouchableOpacity
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     borderTopRightRadius: 30, 
     borderBottomRightRadius: 30,
-    borderColor: "white",
+    
     borderWidth: 1,
   },
 
